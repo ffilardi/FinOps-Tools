@@ -1,0 +1,116 @@
+class DataEntitiesMetadataExport
+{
+    /// <summary>
+    /// Runs the class with the specified arguments.
+    /// </summary>
+    /// <param name = "_args">The specified arguments.</param>
+    public static void main(Args _args)
+    {
+        DMFEntity               entities;
+        DictDataEntity          dataEntity;
+        DictDataEntityField     dataEntityField;
+        DictEnum                dictEnum;
+        DictEnum                dictEnumCategory = new SysDictEnum(enumNum(EntityCategory));
+        CommaTextStreamIo       csv;
+        TableId                 tableId;
+
+        int     i, j, enumValCnt, fieldCnt;
+        str     enumValues;
+ 
+        try
+        {
+            csv = CommaTextStreamIo::constructForWrite();
+ 
+            csv.write(["ENTITY",
+                       "NAME",
+                       "PUBLIC",
+                       "PUBLIC NAME",
+                       "CATEGORY",
+                       "SHARED",
+                       "FIELD NAME",
+                       "FIELD LABEL",
+                       "FIELD TYPE",
+                       "ENUM VALUES",
+                       "MANDATORY",
+                       "FOREIGN KEY",
+                       "ALLOW EDIT",
+                       "ALLOW EDIT ON CREATE",
+                       "ORIGIN FIELD",
+                       "ORIGIN TABLE"
+                ]);
+ 
+            while select entities
+                    where entities.EntityIsEnabled == NoYes::Yes
+                       && entities.TargetEntity != ""
+                       && entities.EntityType == DMFEntityTypes::Entity
+            {
+                tableId = tableName2Id(entities.TargetEntity);
+            
+                if (tableId == 0)
+                {
+                    continue;
+                }
+
+                dataEntity = new DictDataEntity(tableId);
+                fieldCnt = dataEntity.fieldCnt();
+ 
+                for (i=1; i <= fieldCnt; i++)
+                {
+                    dataEntityField = new DictDataEntityField(tableId, dataEntity.fieldCnt2Id(i));
+                
+                    if (dataEntityField.isSystem())
+                    {
+                        continue;
+                    }
+                    
+                    if (dataEntityField.baseType() == Types::Enum)
+                    {
+                        dictEnum = new DictEnum(dataEntityField.enumId());
+                        enumValCnt = dictEnum.values();
+                        enumValues = "";
+ 
+                        for (j=0; j < enumValCnt; j++)
+                        {
+                            if (strLen(enumValues) > 0)
+                            {
+                                enumValues = enumValues + " | ";
+                            }
+ 
+                            enumValues = enumValues +
+                                strFmt("%1-%2",
+                                    dictEnum.index2Value(j),
+                                    dictEnum.index2Label(j) ? dictEnum.index2Label(j) : dictEnum.index2Symbol(j));
+                        }
+                    }
+ 
+                    csv.write([dataEntity.name(),
+                               dataEntity.label(),
+                               dataEntity.isPublic() ? "Yes" : "No",
+                               dataEntity.publicEntityName(),
+                               dictEnumCategory.value2Label(dataEntity.entityCategory()),
+                               dataEntity.dataPrCompany() ? 'No' : "Yes",
+                               dataEntityField.name(),
+                               dataEntityField.label(),
+                               dataEntityField.baseType() == Types::String ?
+                                    strFmt("%1 (%2)", dataEntityField.baseType(), dataEntityField.stringLen()) :
+                                    strFmt("%1", dataEntityField.baseType()),
+                               dataEntityField.baseType() == Types::Enum ? enumValues : "",
+                               dataEntityField.mandatory() ? "Yes" : "No",
+                               dataEntityField.isSurrogateForeignKey() ? "Yes" : "No",
+                               dataEntityField.allowEdit() ? "Yes" : "No",
+                               dataEntityField.allowEditOnCreate() ? "Yes" : "No",
+                               dataEntityField.dataField(),
+                               dataEntityField.dataSource()
+                            ]);
+                }
+            }
+        }
+        catch
+        {
+            info(CLRInterop::getLastException().toString());
+        }
+ 
+        File::SendFileToUser(csv.getStream(), "DataEntitiesMetadataExport.csv");
+    }
+
+}
