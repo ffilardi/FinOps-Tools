@@ -1,0 +1,15 @@
+﻿ENTITY,NAME,PUBLIC,PUBLIC NAME,CATEGORY,SHARED,FIELD NAME,FIELD LABEL,FIELD TYPE,ENUM VALUES,MANDATORY,FOREIGN KEY,ALLOW EDIT,ALLOW EDIT ON CREATE,ORIGIN FIELD,ORIGIN TABLE
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestType,Interest type,Enum,1-Single rate | 2-Multiple rate,Yes,No,Yes,Yes,CustInterestType,CustInterest
+CustInterestCodeEntity,Interest codes,No,,Reference,No,FeeType,Cust Interest Fee Type,Enum,0-Interest payments | 1-Interest earnings,No,No,No,Yes,FeeType,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestByRange,Interest by range,Enum,0-None | 1-Amount | 2-Days | 3-Months,No,No,Yes,Yes,InterestByRange,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestCalcType,Calculate interest based on,Enum,0-Percentage | 1-Amount,No,No,Yes,Yes,InterestCalcType,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestCalculateBy,Day/Mth,Enum,0-Day | 1-Month | 2-Calendar day,No,No,Yes,Yes,InterestCalculate,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestCode,Interest code,String (10),,Yes,No,No,Yes,InterestCode,CustInterest
+CustInterestCodeEntity,Interest codes,No,,Reference,No,Description,Description,String (60),,Yes,No,Yes,Yes,Txt,CustInterest
+CustInterestCodeEntity,Interest codes,No,,Reference,No,ValidFrom,Effective,Date,,No,No,Yes,Yes,ValidFrom,CustInterestVersion
+CustInterestCodeEntity,Interest codes,No,,Reference,No,ValidTo,Expiration,Date,,No,No,Yes,Yes,ValidTo,CustInterestVersion
+CustInterestCodeEntity,Interest codes,No,,Reference,No,GraceDays,Grace period,Integer,,No,No,Yes,Yes,GraceDays,CustInterestVersion
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestCalculateByInterval,Days,Integer,,No,No,Yes,Yes,InterestInterval,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,InterestPercent,Monthly interest %,Real,,No,No,Yes,Yes,InterestPercent,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,LedgerPostingAccount,Main account,Int64,,No,Yes,Yes,Yes,LedgerDimension,CustInterestVersionDetail
+CustInterestCodeEntity,Interest codes,No,,Reference,No,LedgerPostingAccountDisplayValue,Dimension combination display value,String (500),,No,No,Yes,Yes,DisplayValue,InterestVersionDCE
